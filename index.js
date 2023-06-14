@@ -6,7 +6,10 @@ let requests_sent = 0;
 
 puppeteer
   .use(StealthPlugin())
-  .launch({ headless: true })
+  .launch({
+    headless: true,
+    args: ["--no-sandbox"],
+  })
   .then(async (browser) => {
     for (let i = 0; i < 999999999999; i++) {
       const page = await browser.newPage();
