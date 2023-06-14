@@ -70,6 +70,11 @@ puppeteer
       await submitButton[0].click();
       await page.waitForTimeout(5000);
 
+      console.log(`===============================`);
+      console.log(`Name: ${randomName}`);
+      console.log(`Number: ${randomNumber}`);
+      console.log(`Email: ${randomChars}@gmail.com`);
+      console.log(`Area: ${randomArea}`);
       console.log("\x1b[32m%s\x1b[0m", "Submitted"); // Green color
       console.log("\x1b[34m%s\x1b[0m", "Requests sent: " + ++requests_sent); // Blue color
 
