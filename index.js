@@ -69,6 +69,7 @@ puppeteer
       let submitButton = await page.$x("//button[@type='submit' and @name='wpforms[submit]']");
       await submitButton[0].click();
       await page.waitForTimeout(5000);
+      await page.screenshot({path: 'image.png'});
 
       console.log(`===============================`);
       console.log(`Name: ${randomName}`);
@@ -78,7 +79,7 @@ puppeteer
       console.log("\x1b[32m%s\x1b[0m", "Submitted"); // Green color
       console.log("\x1b[34m%s\x1b[0m", "Requests sent: " + ++requests_sent); // Blue color
 
-      sleep(10000);
+      // sleep(10000);
 
       // Close the tab once it is submitted
       await page.close();
