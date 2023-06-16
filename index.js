@@ -14,13 +14,13 @@ puppeteer
     for (let i = 0; i < 999999999999; i++) {
       const page = await browser.newPage();
       // Enable request interception
-      await page.setRequestInterception(true);
+      // await page.setRequestInterception(true);
 
       // If the request is for an image, abort the request
-      page.on("request", (request) => {
-        if (request.resourceType() === "image") request.abort();
-        else request.continue();
-      });
+      // page.on("request", (request) => {
+      //   if (request.resourceType() === "image") request.abort();
+      //   else request.continue();
+      // });
 
       await page.goto("https://compretcc.com/");
       await page.waitForTimeout(5000);
