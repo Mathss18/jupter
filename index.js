@@ -3,7 +3,6 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { setTimeout as sleep } from "timers/promises";
 import { generateRandomArea, generateRandomName, generateRandomNumber } from "./helpers.js";
 
-
 let requests_sent = 0;
 const PROXY_IP = "64.224.17.10";
 const PROXY_PORT = "50100";
@@ -20,12 +19,12 @@ async function disableImagesLoad(page) {
 
 puppeteer
   .use(StealthPlugin())
-  .launch({ headless: true, args: [`--proxy-server=${PROXY_IP}:${PROXY_PORT}`, '--no-sandbox'] })
+  .launch({ headless: true, args: [`--proxy-server=${PROXY_IP}:${PROXY_PORT}`, "--no-sandbox"] })
   .then(async (browser) => {
     for (let i = 0; i < 999999999999; i++) {
       const page = await browser.newPage();
       // Enable request interception
-      await disableImagesLoad(page)
+      await disableImagesLoad(page);
 
       await page.authenticate({
         username: PROXY_USER,
@@ -33,17 +32,24 @@ puppeteer
       });
 
       await page.goto("https://compretcc.com/", { timeout: 999999999 });
-      await page.waitForTimeout(5000);
+      await page.waitForTimeout(1000);
 
       // Generate a random name
-      const randomName = generateRandomName()
+      const randomName = generateRandomName();
 
       // Generate a random number
       const randomNumber = generateRandomNumber();
-        
+
       // Generate a random area
       const randomArea = generateRandomArea();
 
+      await page.evaluate(() => {
+        window.scrollBy(500, window.innerHeight);
+      });
+      await page.mouse.move(100, 100);
+      await page.keyboard.press("Shift");
+
+      await page.waitForSelector(".iti__selected-flag", { timeout: 999999999 });
       await page.click(".iti__selected-flag");
 
       // Wait for the dropdown options to be visible
@@ -51,6 +57,8 @@ puppeteer
 
       // Select the country (In this case, Brazil)
       await page.click("#iti-0__item-br");
+
+      await sleep(100);
 
       await page.$eval("#wpforms-25477-field_0", (el, value) => (el.value = value), randomName);
       await page.$eval("#wpforms-25477-field_3", (el, value) => (el.value = value), randomNumber);
