@@ -69,7 +69,7 @@ puppeteer
       let submitButton = await page.$x("//button[@type='submit' and @name='wpforms[submit]']");
       await submitButton[0].click();
       await page.waitForTimeout(5000);
-      await page.screenshot({path: 'image.png'});
+      await page.screenshot({path: 'image.png', fullPage: true});
 
       console.log(`===============================`);
       console.log(`Name: ${randomName}`);
