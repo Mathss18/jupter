@@ -1,81 +1,71 @@
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import { ddd, names, surenames } from "./names.js";
 import { setTimeout as sleep } from "timers/promises";
+import { generateRandomArea, generateRandomName, generateRandomNumber } from "./helpers.js";
+
+
 let requests_sent = 0;
+const PROXY_IP = "64.224.17.10";
+const PROXY_PORT = "50100";
+const PROXY_USER = "theus7";
+const PROXY_PASS = "fiIeeApyFq";
+
+async function disableImagesLoad(page) {
+  await page.setRequestInterception(true);
+  await page.on("request", (request) => {
+    if (request.resourceType() === "image") request.abort();
+    else request.continue();
+  });
+}
 
 puppeteer
   .use(StealthPlugin())
-  .launch({
-    headless: true,
-    args: ["--no-sandbox"],
-  })
+  .launch({ headless: true, args: [`--proxy-server=${PROXY_IP}:${PROXY_PORT}`, '--no-sandbox'] })
   .then(async (browser) => {
     for (let i = 0; i < 999999999999; i++) {
       const page = await browser.newPage();
       // Enable request interception
-      // await page.setRequestInterception(true);
+      await disableImagesLoad(page)
 
-      // If the request is for an image, abort the request
-      // page.on("request", (request) => {
-      //   if (request.resourceType() === "image") request.abort();
-      //   else request.continue();
-      // });
+      await page.authenticate({
+        username: PROXY_USER,
+        password: PROXY_PASS,
+      });
 
-      await page.goto("https://compretcc.com/");
+      await page.goto("https://compretcc.com/", { timeout: 999999999 });
       await page.waitForTimeout(5000);
 
       // Generate a random name
-      const selectedName = names[Math.floor(Math.random() * names.length)];
-      let randomName =
-        selectedName.toLowerCase().charAt(0).toUpperCase() +
-        selectedName.slice(1).toLowerCase() +
-        " " +
-        surenames[Math.floor(Math.random() * surenames.length)];
+      const randomName = generateRandomName()
 
       // Generate a random number
-      let randomNumber =
-        ddd[Math.floor(Math.random() * ddd.length)] + "9" + Array.from({ length: 8 }, () => Math.floor(Math.random() * 10)).join("");
+      const randomNumber = generateRandomNumber();
+        
+      // Generate a random area
+      const randomArea = generateRandomArea();
 
-      let randomArea = Array.from(
-        { length: Math.floor(Math.random() * 10) },
-        () =>
-          "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"[
-            Math.floor(Math.random() * "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".length)
-          ]
-      ).join("");
+      await page.click(".iti__selected-flag");
 
-      let randomChars = Array.from(
-        { length: Math.floor(Math.random() * 10) },
-        () =>
-          "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[
-            Math.floor(Math.random() * "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".length)
-          ]
-      ).join("");
+      // Wait for the dropdown options to be visible
+      await page.waitForSelector(".iti__country-list");
 
-      // Fill in the "Nome" field
+      // Select the country (In this case, Brazil)
+      await page.click("#iti-0__item-br");
+
       await page.$eval("#wpforms-25477-field_0", (el, value) => (el.value = value), randomName);
-
-      // Fill in the "Celular / Whatsapp" field
       await page.$eval("#wpforms-25477-field_3", (el, value) => (el.value = value), randomNumber);
-
-      // Fill in the "E-mail" field
-      // await page.$eval("#wpforms-25477-field_1", (el, value) => (el.value = value), `${randomChars}@gmail.com`);
-
-      // Fill in the "Curso . Matéria" field
+      // await page.$eval("#wpforms-25477-field_1", (el, value) => (el.value = value), `${randomArea}@gmail.com`);
       // await page.$eval("#wpforms-25477-field_4", (el, value) => (el.value = value), randomArea);
 
       // Click the "Enviar" button
       let submitButton = await page.$x("//button[@type='submit' and @name='wpforms[submit]']");
       await submitButton[0].click();
       await page.waitForTimeout(5000);
-      await page.screenshot({path: 'image.png', fullPage: true});
+      await page.screenshot({ path: "image.png", fullPage: true });
 
       console.log(`===============================`);
       console.log(`Name: ${randomName}`);
       console.log(`Number: ${randomNumber}`);
-      // console.log(`Email: ${randomChars}@gmail.com`);
-      // console.log(`Area: ${randomArea}`);
       console.log("\x1b[32m%s\x1b[0m", "Submitted"); // Green color
       console.log("\x1b[34m%s\x1b[0m", "Requests sent: " + ++requests_sent); // Blue color
 
