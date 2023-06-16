@@ -1,7 +1,7 @@
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { ddd, names, surenames } from "./names.js";
-
+import { setTimeout as sleep } from "timers/promises";
 let requests_sent = 0;
 
 puppeteer
@@ -60,10 +60,10 @@ puppeteer
       await page.$eval("#wpforms-25477-field_3", (el, value) => (el.value = value), randomNumber);
 
       // Fill in the "E-mail" field
-      await page.$eval("#wpforms-25477-field_1", (el, value) => (el.value = value), `${randomChars}@gmail.com`);
+      // await page.$eval("#wpforms-25477-field_1", (el, value) => (el.value = value), `${randomChars}@gmail.com`);
 
       // Fill in the "Curso . Matéria" field
-      await page.$eval("#wpforms-25477-field_4", (el, value) => (el.value = value), randomArea);
+      // await page.$eval("#wpforms-25477-field_4", (el, value) => (el.value = value), randomArea);
 
       // Click the "Enviar" button
       let submitButton = await page.$x("//button[@type='submit' and @name='wpforms[submit]']");
@@ -73,10 +73,12 @@ puppeteer
       console.log(`===============================`);
       console.log(`Name: ${randomName}`);
       console.log(`Number: ${randomNumber}`);
-      console.log(`Email: ${randomChars}@gmail.com`);
-      console.log(`Area: ${randomArea}`);
+      // console.log(`Email: ${randomChars}@gmail.com`);
+      // console.log(`Area: ${randomArea}`);
       console.log("\x1b[32m%s\x1b[0m", "Submitted"); // Green color
       console.log("\x1b[34m%s\x1b[0m", "Requests sent: " + ++requests_sent); // Blue color
+
+      sleep(10000);
 
       // Close the tab once it is submitted
       await page.close();
